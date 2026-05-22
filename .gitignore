@@ -18,3 +18,7 @@ public/uploads/
 cloudflared.exe
 cloudflared-windows-amd64.msi
 
+# Compiled Electron executables
+dist/
+
+

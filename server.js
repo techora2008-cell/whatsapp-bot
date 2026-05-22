@@ -575,17 +575,21 @@ let actualPort = PORT;
 const server = app.listen(PORT);
 
 server.on('listening', () => {
+    global.expressServerPort = PORT;
+    process.emit('server-started', PORT);
     logEvent(`=======================================================`);
     logEvent(`WhatsApp Broadcast Bot dashboard running at:`);
     logEvent(`http://localhost:${PORT}`);
     logEvent(`=======================================================`);
     
-    // Auto open browser on successful startup
-    try {
-        const { exec } = require('child_process');
-        exec(`start http://localhost:${PORT}`);
-    } catch (e) {
-        console.error('Failed to auto-open browser:', e);
+    // Auto open browser on successful startup (only if not running in Electron)
+    if (!process.versions.electron) {
+        try {
+            const { exec } = require('child_process');
+            exec(`start http://localhost:${PORT}`);
+        } catch (e) {
+            console.error('Failed to auto-open browser:', e);
+        }
     }
 });
 
@@ -594,17 +598,21 @@ server.on('error', (err) => {
         logEvent(`Port ${PORT} is already in use. Retrying on port 5000...`, 'warning');
         actualPort = 5000;
         const fallbackServer = app.listen(actualPort, () => {
+            global.expressServerPort = actualPort;
+            process.emit('server-started', actualPort);
             logEvent(`=======================================================`);
             logEvent(`WhatsApp Broadcast Bot dashboard running at:`);
             logEvent(`http://localhost:${actualPort}`);
             logEvent(`=======================================================`);
             
-            // Auto open browser on fallback port
-            try {
-                const { exec } = require('child_process');
-                exec(`start http://localhost:${actualPort}`);
-            } catch (e) {
-                console.error('Failed to auto-open browser:', e);
+            // Auto open browser on fallback port (only if not running in Electron)
+            if (!process.versions.electron) {
+                try {
+                    const { exec } = require('child_process');
+                    exec(`start http://localhost:${actualPort}`);
+                } catch (e) {
+                    console.error('Failed to auto-open browser:', e);
+                }
             }
         });
         

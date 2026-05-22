@@ -2,9 +2,12 @@
   "name": "whatsapp-broadcast-bot",
   "version": "1.0.0",
   "description": "WhatsApp image broadcast bot with caption and rate-limiting using whatsapp-web.js",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "server": "node server.js",
+    "electron": "electron .",
+    "dist": "electron-builder --win portable"
   },
   "dependencies": {
     "express": "^5.2.1",
@@ -20,5 +23,26 @@
     "whatsapp-web.js"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^42.2.0",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.techora.whatsapp.broadcast",
+    "productName": "Techora WhatsApp Broadcast Bot",
+    "win": {
+      "target": [
+        "portable"
+      ]
+    },
+    "files": [
+      "**/*",
+      "!node_modules/electron/**/*",
+      "!node_modules/electron-builder/**/*",
+      "!cloudflared-windows-amd64.msi",
+      "!.git/**/*"
+    ],
+    "asar": true
+  }
 }
