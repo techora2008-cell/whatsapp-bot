@@ -1,0 +1,24 @@
+{
+  "name": "whatsapp-broadcast-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp image broadcast bot with caption and rate-limiting using whatsapp-web.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mime-types": "^2.1.35",
+    "multer": "^2.1.1",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.26.0"
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "broadcast",
+    "whatsapp-web.js"
+  ],
+  "author": "",
+  "license": "ISC"
+}

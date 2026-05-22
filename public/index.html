@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techora WhatsApp Broadcast Panel</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Boxicons for modern icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- QR Code Generator Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="logo-area">
+                <i class="bx bxs-spa leaf-icon"></i>
+                <div class="logo-text">
+                    <h1>TECHORA</h1>
+                    <span>Techora WhatsApp Broadcast Center</span>
+                </div>
+            </div>
+            <div class="status-indicator" id="status-card">
+                <span class="status-dot pulsing" id="status-dot"></span>
+                <span class="status-label" id="status-label">LOADING STATE...</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content Grid -->
+        <main class="dashboard-grid">
+            
+            <!-- LEFT COLUMN: Client Connection & Setup -->
+            <section class="grid-col left-col">
+                <!-- QR Code & Connection Status Card -->
+                <div class="glass-card connection-card">
+                    <div class="card-header">
+                        <i class="bx bx-qr-scan header-icon"></i>
+                        <h2>WhatsApp Connection</h2>
+                    </div>
+                    
+                    <div class="client-controls" style="margin-bottom: 0.75rem;">
+                        <button id="btn-start" class="btn btn-primary"><i class="bx bx-play-circle"></i> Start Client</button>
+                        <button id="btn-stop" class="btn btn-danger btn-disabled" disabled><i class="bx bx-stop-circle"></i> Stop Client</button>
+                    </div>
+                    
+                    <button id="btn-logout" class="btn btn-danger btn-disabled" disabled style="width: 100%; margin-bottom: 1.5rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171;" title="Wipe session files and log out completely">
+                        <i class="bx bx-trash"></i> Delete WhatsApp Session
+                    </button>
+
+                    <div class="qr-container-box">
+                        <!-- QR Code Placeholder / Real Canvas -->
+                        <div id="qr-placeholder" class="qr-placeholder active">
+                            <i class="bx bx-loader-alt spinner"></i>
+                            <p id="qr-placeholder-text">Launch WhatsApp Client to view login QR code</p>
+                        </div>
+                        <div id="qr-code-wrapper" class="qr-code-wrapper">
+                            <canvas id="qr-canvas"></canvas>
+                            <p class="qr-helper-text">Scan with WhatsApp -> Linked Devices</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Broadcast Command Actions Card -->
+                <div class="glass-card action-card">
+                    <div class="card-header">
+                        <i class="bx bx-send header-icon"></i>
+                        <h2>Broadcast Status</h2>
+                    </div>
+                    <div class="broadcast-actions">
+                        <button id="btn-run-broadcast" class="btn btn-success btn-large btn-disabled" disabled>
+                            <i class="bx bx-broadcast animate-pulse"></i> Start Broadcast Sending
+                        </button>
+                        <button id="btn-stop-broadcast" class="btn btn-warning btn-large btn-disabled" disabled title="Click to pause or stop the active broadcast campaign">
+                            <i class="bx bx-pause-circle"></i> Stop/Pause Broadcast
+                        </button>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-label">
+                            <span id="progress-text">Ready to broadcast</span>
+                        </div>
+                    </div>
+                    <div class="campaign-summary-box" style="margin-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <p id="sent-stats" style="margin: 0; font-size: 0.9rem; color: rgba(255,255,255,0.8); font-weight: 500;">Campaign Progress: 0 messages sent so far.</p>
+                        <button id="btn-reset-broadcast" class="btn btn-secondary btn-large" style="width: 100%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff;">
+                            <i class="bx bx-reset"></i> Reset Campaign History
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: Settings Form -->
+            <section class="grid-col right-col">
+                <div class="glass-card settings-card">
+                    <div class="card-header">
+                        <i class="bx bx-cog header-icon"></i>
+                        <h2>Broadcast Settings</h2>
+                    </div>
+                    
+                    <form id="settings-form" class="settings-form">
+                        
+                        <!-- Media Section -->
+                        <div class="form-group image-upload-group">
+                            <label class="field-label">Broadcast Image File</label>
+                            <div class="image-upload-wrapper">
+                                <div class="image-preview-container">
+                                    <img id="img-preview" src="uploads/placeholder.png" alt="No image selected" onerror="this.src='https://placehold.co/600x400/10171d/10b981?text=No+Image+Selected'">
+                                </div>
+                                <div class="upload-control-block">
+                                    <label for="image-file-input" id="btn-upload-image" class="btn btn-secondary upload-btn">
+                                        <i class="bx bx-cloud-upload"></i> Upload New Image
+                                    </label>
+                                    <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+                                    <span class="file-name-label" id="file-name-label">neelveda.jpg</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target selection option -->
+                        <div class="form-group">
+                            <label class="field-label">Sending Target Mode</label>
+                            <div class="radio-cards-grid">
+                                <label class="radio-card">
+                                    <input type="radio" name="targetType" value="both" checked>
+                                    <div class="radio-card-content">
+                                        <i class="bx bx-group"></i>
+                                        <span>All Groups & Contacts</span>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="targetType" value="groups">
+                                    <div class="radio-card-content">
+                                        <i class="bx bxs-group"></i>
+                                        <span>Groups Only</span>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="targetType" value="contacts">
+                                    <div class="radio-card-content">
+                                        <i class="bx bx-user"></i>
+                                        <span>Contacts Only</span>
+                                    </div>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="targetType" value="single">
+                                    <div class="radio-card-content">
+                                        <i class="bx bx-target-lock"></i>
+                                        <span>Single Target</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Target details for single -->
+                        <div class="form-group input-slide" id="single-target-wrapper" style="display: none;">
+                            <label for="input-single" class="field-label">Single Contact Name, Phone Number, or JID</label>
+                            <div class="input-with-icon">
+                                <i class="bx bx-search-alt"></i>
+                                <input type="text" id="input-single" placeholder="e.g. Techora Sales Group, 919876543210, or 12345-67890@g.us">
+                            </div>
+                            <span class="input-helper">If specifying a name, the bot will search your WhatsApp chat history case-insensitively.</span>
+                        </div>
+
+                        <!-- Custom targets list -->
+                        <div class="form-group" id="list-target-wrapper">
+                            <label for="input-list" class="field-label">Custom Targets List (Optional - one per line)</label>
+                            <textarea id="input-list" placeholder="Enter phone numbers or Group JIDs, one per line (overrides standard type filters if provided). e.g.:&#13;919847404076&#13;120363024823902345@g.us" rows="3"></textarea>
+                            <span class="input-helper">Keep blank to broadcast to all matching chats from history automatically.</span>
+                        </div>
+
+                        <!-- Text Caption -->
+                        <div class="form-group">
+                            <label for="input-caption" class="field-label">Message Caption Text</label>
+                            <textarea id="input-caption" placeholder="Write message caption..." rows="6"></textarea>
+                        </div>
+
+                        <!-- Delay range inputs -->
+                        <div class="form-group delay-settings">
+                            <label class="field-label">Randomized Wait Delay Between Messages</label>
+                            <div class="delay-inputs-grid">
+                                <div class="delay-input-box">
+                                    <label for="input-min-seconds">Minimum (Seconds)</label>
+                                    <input type="number" id="input-min-seconds" min="60" value="60">
+                                </div>
+                                <div class="delay-separator">to</div>
+                                <div class="delay-input-box">
+                                    <label for="input-max-seconds">Maximum (Seconds)</label>
+                                    <input type="number" id="input-max-seconds" min="10" value="120">
+                                </div>
+                            </div>
+                            <span class="input-helper">We strongly recommend keeping this between 60 (1 min) and 120 (2 mins) to avoid account bans.</span>
+                        </div>
+
+                        <!-- Save Config Button -->
+                        <div class="form-actions">
+                            <button type="submit" id="btn-save-config" class="btn btn-primary btn-save">
+                                <i class="bx bx-save"></i> Save & Apply Configuration
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER: Live Terminal Log Console -->
+        <footer class="live-logs-section">
+            <div class="glass-card terminal-card">
+                <div class="card-header terminal-header">
+                    <div class="terminal-title">
+                        <i class="bx bx-terminal header-icon"></i>
+                        <h2>Live Console Logs</h2>
+                    </div>
+                    <button id="btn-clear-logs" class="btn btn-small btn-secondary">
+                        <i class="bx bx-trash"></i> Clear View
+                    </button>
+                </div>
+                <div class="terminal-window" id="terminal-window">
+                    <div class="terminal-line system-line">[System] Welcome to Techora Broadcast Terminal. Start Client to connect.</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- JavaScript script bundle -->
+    <script src="app.js"></script>
+</body>
+</html>

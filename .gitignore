@@ -1,0 +1,15 @@
+# Node dependencies
+node_modules/
+package-lock.json
+
+# WhatsApp Web.js auth sessions and cache
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Local configuration and broadcast history
+config.json
+sent_history.json
+
+# User uploads and logs
+public/uploads/
+*.log
