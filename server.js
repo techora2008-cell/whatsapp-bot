@@ -224,20 +224,25 @@ app.post('/api/start', (req, res) => {
     stopBroadcastRequest = false;
     
     try {
+        const puppeteerOptions = {
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--disable-gpu'
+            ]
+        };
+        if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+            puppeteerOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+        }
+
         client = new Client({
             authStrategy: new LocalAuth(),
-            puppeteer: {
-                headless: true,
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--disable-accelerated-2d-canvas',
-                    '--no-first-run',
-                    '--no-zygote',
-                    '--disable-gpu'
-                ]
-            }
+            puppeteer: puppeteerOptions
         });
         
         client.on('qr', (qr) => {

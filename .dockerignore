@@ -1,0 +1,10 @@
+node_modules
+.wwebjs_auth
+.wwebjs_cache
+cloudflared.exe
+cloudflared-windows-amd64.msi
+start_dashboard.bat
+.git
+.gitignore
+sent_history.json
+npm-debug.log
