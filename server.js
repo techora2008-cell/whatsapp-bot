@@ -11,15 +11,52 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static UI files from 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+// Determine writable application data directory (critical for packaged ASAR execution)
+const userDataDir = process.env.USER_DATA_DIR || __dirname;
 
-// Ensure upload directory exists
-const uploadDir = path.join(__dirname, 'public/uploads');
+// Ensure writable directories exist
+const uploadDir = path.join(userDataDir, 'uploads');
+if (!fs.existsSync(userDataDir)) {
+    fs.mkdirSync(userDataDir, { recursive: true });
+}
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
+
+// Configuration paths (using external writable directory if in Electron)
+const configPath = path.join(userDataDir, 'config.json');
+const sentHistoryPath = path.join(userDataDir, 'sent_history.json');
+
+// Migrate default configuration & assets from read-only ASAR directory on startup
+function migrateDefaultAssets() {
+    try {
+        const sourceConfig = path.join(__dirname, 'config.json');
+        if (!fs.existsSync(configPath) && fs.existsSync(sourceConfig)) {
+            fs.copyFileSync(sourceConfig, configPath);
+            console.log(`[INFO] Initialized configuration at: ${configPath}`);
+        }
+        
+        const sourceUploads = path.join(__dirname, 'public/uploads');
+        if (fs.existsSync(sourceUploads)) {
+            const files = fs.readdirSync(sourceUploads);
+            files.forEach(file => {
+                const srcFile = path.join(sourceUploads, file);
+                const destFile = path.join(uploadDir, file);
+                if (!fs.existsSync(destFile)) {
+                    fs.copyFileSync(srcFile, destFile);
+                    console.log(`[INFO] Copied asset to writable folder: ${file}`);
+                }
+            });
+        }
+    } catch (err) {
+        console.error('[ERROR] Failed to migrate default assets:', err);
+    }
+}
+migrateDefaultAssets();
+
+// Serve static UI files from 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(uploadDir));
 
 // Multer storage configuration for image upload
 const storage = multer.diskStorage({
@@ -32,10 +69,6 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage });
-
-// Configuration path
-const configPath = path.join(__dirname, 'config.json');
-const sentHistoryPath = path.join(__dirname, 'sent_history.json');
 
 // Memory state variables
 let client = null;
@@ -386,16 +419,17 @@ async function runBroadcastLoop() {
         
         // 1. Resolve image path
         let imageAbsolutePath = '';
-        if (config.image) {
-            // Check if relative to public or root
+            // Check if relative to userDataDir, public, or root
+            const externalPath = path.join(userDataDir, config.image);
             const publicPath = path.join(__dirname, 'public', config.image);
             const rootPath = path.join(__dirname, config.image);
-            if (fs.existsSync(publicPath)) {
+            if (fs.existsSync(externalPath)) {
+                imageAbsolutePath = externalPath;
+            } else if (fs.existsSync(publicPath)) {
                 imageAbsolutePath = publicPath;
             } else if (fs.existsSync(rootPath)) {
                 imageAbsolutePath = rootPath;
             }
-        }
         
         if (!imageAbsolutePath || !fs.existsSync(imageAbsolutePath)) {
             logEvent(`Image file not found: ${config.image || 'None'}`, 'error');
