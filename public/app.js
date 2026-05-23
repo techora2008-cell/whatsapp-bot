@@ -289,6 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSaveConfig.classList.remove('btn-disabled');
                 btnSaveConfig.removeAttribute('disabled');
                 btnUploadImage.classList.remove('btn-disabled');
+                btnClearLogs.classList.remove('btn-disabled');
+                btnClearLogs.removeAttribute('disabled');
                 
                 // QR Elements
                 qrPlaceholder.classList.add('active');
@@ -324,6 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSaveConfig.classList.add('btn-disabled');
                 btnSaveConfig.setAttribute('disabled', 'true');
                 btnUploadImage.classList.add('btn-disabled');
+                btnClearLogs.classList.remove('btn-disabled');
+                btnClearLogs.removeAttribute('disabled');
                 
                 // QR Elements
                 qrPlaceholder.classList.add('active');
@@ -359,6 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSaveConfig.classList.remove('btn-disabled');
                 btnSaveConfig.removeAttribute('disabled');
                 btnUploadImage.classList.remove('btn-disabled');
+                btnClearLogs.classList.remove('btn-disabled');
+                btnClearLogs.removeAttribute('disabled');
                 
                 progressText.textContent = 'Awaiting QR Code Authentication';
                 break;
@@ -388,6 +394,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSaveConfig.classList.remove('btn-disabled');
                 btnSaveConfig.removeAttribute('disabled');
                 btnUploadImage.classList.remove('btn-disabled');
+                btnClearLogs.classList.remove('btn-disabled');
+                btnClearLogs.removeAttribute('disabled');
                 
                 // QR Elements
                 qrPlaceholder.classList.add('active');
@@ -424,6 +432,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSaveConfig.classList.add('btn-disabled');
                 btnSaveConfig.setAttribute('disabled', 'true');
                 btnUploadImage.classList.add('btn-disabled');
+                btnClearLogs.classList.add('btn-disabled');
+                btnClearLogs.setAttribute('disabled', 'true');
                 
                 // QR Elements
                 qrPlaceholder.classList.add('active');
