@@ -7,7 +7,7 @@
     "start": "node index.js",
     "server": "node server.js",
     "electron": "electron .",
-    "dist": "electron-builder --win portable"
+    "dist": "electron-builder --win nsis"
   },
   "dependencies": {
     "express": "^5.2.1",
@@ -33,10 +33,16 @@
     "productName": "Techora WhatsApp Broadcast Bot",
     "win": {
       "target": [
-        "portable"
+        "nsis"
       ],
       "signAndEditExecutable": false,
       "icon": "public/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "setup.${ext}",
+      "warningsAsErrors": false
     },
     "files": [
       "**/*",
